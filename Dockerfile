@@ -16,12 +16,13 @@ RUN apt update -yq \
 && apt -y install php8.2 libapache2-mod-php8.2 php8.2-mbstring php8.2-xml php8.2-common php8.2-curl php8.2-mysql php8.2-intl apache2 apache2-utils nano git nodejs symfony-cli yarn \
 && apt -y update \
 && apt -y upgrade \
-&& apt -y clean \
 && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 && php -r "if (hash_file('sha384', 'composer-setup.php') === 'e21205b207c3ff031906575712edab6f13eb0b361f2085f1f1237b7126d785e826a450292b6cfd1d64d92e6563bbde02') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
 && php composer-setup.php \
 && php -r "unlink('composer-setup.php');" \
-&& mv composer.phar /usr/local/bin/composer
+&& mv composer.phar /usr/local/bin/composer \
+&& apt -y clean \
+&& apt -y autoremove
 
 FROM base AS config
 
@@ -42,7 +43,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 EOT
 
-From config AS final
+FROM config AS final
 
 EXPOSE 80
 
