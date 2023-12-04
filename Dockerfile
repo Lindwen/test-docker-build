@@ -39,6 +39,8 @@ CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 EOT
 
+EXPOSE 80
+
 HEALTHCHECK CMD curl --fail http://localhost:80/ || exit 1
 
 CMD ["apache2ctl", "-D", "FOREGROUND"]
