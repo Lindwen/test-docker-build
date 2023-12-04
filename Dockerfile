@@ -27,7 +27,7 @@ RUN apt update -yq \
 && a2dismod info \
 && a2dismod status \
 && phpenmod intl \
-&& cat <<EOT >> /etc/apache2/sites-available/000-default.conf
+&& cat <<EOT > /etc/apache2/sites-available/000-default.conf
 <VirtualHost *:80>
 ServerAdmin webmaster@localhost
 DocumentRoot /var/www/html/public
@@ -38,5 +38,7 @@ ErrorLog ${APACHE_LOG_DIR}/error.log
 CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 EOT
+
+HEALTHCHECK CMD curl --fail http://localhost:80/ || exit 1
 
 CMD ["apache2ctl", "-D", "FOREGROUND"]
