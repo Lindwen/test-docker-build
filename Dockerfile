@@ -1,4 +1,4 @@
-FROM debian:12.1-slim
+FROM debian:12-slim AS base
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -21,23 +21,28 @@ RUN apt update -yq \
 && php -r "if (hash_file('sha384', 'composer-setup.php') === 'e21205b207c3ff031906575712edab6f13eb0b361f2085f1f1237b7126d785e826a450292b6cfd1d64d92e6563bbde02') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
 && php composer-setup.php \
 && php -r "unlink('composer-setup.php');" \
-&& mv composer.phar /usr/local/bin/composer \
-&& apache2ctl start \
+&& mv composer.phar /usr/local/bin/composer
+
+FROM base AS config
+
+RUN apache2ctl start \
 && a2enmod rewrite \
 && a2dismod info \
 && a2dismod status \
 && phpenmod intl \
 && cat <<EOT > /etc/apache2/sites-available/000-default.conf
 <VirtualHost *:80>
-ServerAdmin webmaster@localhost
-DocumentRoot /var/www/html/public
-<Directory /var/www/html/public>
-AllowOverride all
-</Directory>
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/html/public
+  <Directory /var/www/html/public>
+    AllowOverride all
+  </Directory>
 ErrorLog ${APACHE_LOG_DIR}/error.log
 CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 EOT
+
+From config AS final
 
 EXPOSE 80
 
