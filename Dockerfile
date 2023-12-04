@@ -36,7 +36,7 @@ RUN apache2ctl start \
 && cat <<EOT > /etc/apache2/sites-available/000-default.conf
 <VirtualHost *:80>
   ServerAdmin webmaster@localhost
-  ServerName 127.0.0.1
+  ServerName localhost
   DocumentRoot /var/www/html/public
   <Directory /var/www/html/public>
     AllowOverride all
