@@ -1,5 +1,7 @@
 FROM debian:12-slim AS base
 
+ARG PHP_VERSION=8.2
+
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt update -yq \
@@ -13,7 +15,7 @@ RUN apt update -yq \
 && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
 && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
 && apt -y update \
-&& apt -y install php8.2 libapache2-mod-php8.2 php8.2-mbstring php8.2-xml php8.2-common php8.2-curl php8.2-mysql php8.2-intl apache2 apache2-utils nano git nodejs symfony-cli yarn \
+&& apt -y install php${PHP_VERSION} libapache2-mod-php${PHP_VERSION} php${PHP_VERSION}-mbstring php${PHP_VERSION}-xml php${PHP_VERSION}-common php${PHP_VERSION}-curl php${PHP_VERSION}-mysql php${PHP_VERSION}-intl apache2 apache2-utils nano git nodejs symfony-cli yarn \
 && apt -y update \
 && apt -y upgrade \
 && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
